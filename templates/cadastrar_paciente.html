@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Paciente - PEPGH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #0284c7; --navy-blue: #182238; --bg: #f4f7f6; --card-bg: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg); color: var(--navy-blue); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+        .container { max-width: 520px; width: 100%; }
+        .card { background: var(--card-bg); padding: 32px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.04); }
+        h1 { font-size: 1.5rem; margin-bottom: 8px; color: var(--navy-blue); }
+        p { color: #64748b; font-size: 0.95rem; margin-bottom: 24px; }
+        form { display: flex; flex-direction: column; gap: 14px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        label { font-size: 0.85rem; font-weight: 600; }
+        input { padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background: #0369a1; }
+        .back-link { text-align: center; margin-top: 16px; }
+        .back-link a { color: #64748b; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
+        .msg-erro { background: #fef2f2; color: #b91c1c; padding: 10px; border-radius: 8px; font-size: 0.85rem; border: 1px solid #fecaca; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>➕ Cadastrar Paciente</h1>
+            <p>Preencha os dados do paciente para liberá-lo no sistema.</p>
+
+            {% with errs = get_flashed_messages(category_filter=["erro_paciente"]) %}
+                {% if errs %}<div class="msg-erro" style="margin-bottom: 12px;">{{ errs[0] }}</div>{% endif %}
+            {% endwith %}
+
+            <form action="/cadastrar_paciente" method="POST">
+                <div class="form-group">
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" id="nome" name="nome" placeholder="Digite o nome completo" required>
+                </div>
+                <div class="form-group">
+                    <label for="cpf">CPF do Paciente</label>
+                    <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" maxlength="14" required>
+                </div>
+                <div class="form-group">
+                    <label for="dataNascimento">Data de Nascimento</label>
+                    <input type="date" id="dataNascimento" name="dataNascimento" required>
+                </div>
+                <div class="form-group">
+                    <label for="historico">Histórico Familiar / Observações</label>
+                    <input type="text" id="historico" name="historico" placeholder="Ex: Hipertensão, Alergias">
+                </div>
+
+                <button type="submit" class="btn-submit">Salvar Paciente</button>
+            </form>
+
+            <div class="back-link">
+                <a href="/">← Voltar para a Página Inicial</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cpfInput = document.getElementById('cpf');
+        cpfInput.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = v;
+        });
+    </script>
+</body>
+</html>

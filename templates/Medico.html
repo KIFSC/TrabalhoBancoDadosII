@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Médico - PEPGH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #00d285;
+            --navy-blue: #182238;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-dark: #182238;
+            --text-muted: #64748b;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); padding: 30px 20px; }
+        .container { max-width: 1040px; margin: 0 auto; }
+
+        header { background: var(--card-bg); padding: 24px 30px; border-radius: 16px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .user-info h1 { font-size: 1.4rem; color: var(--navy-blue); font-weight: 700; }
+        .user-info p { color: var(--text-muted); font-size: 0.9rem; }
+        .logout-btn { color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.9rem; padding: 8px 16px; border-radius: 8px; background: #fef2f2; transition: background 0.2s; }
+        .logout-btn:hover { background: #fee2e2; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .card { background: var(--card-bg); padding: 28px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .full-width { grid-column: span 2; }
+
+        h2 { font-size: 1.15rem; color: var(--navy-blue); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; }
+
+        form { display: flex; flex-direction: column; gap: 14px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        label { font-size: 0.85rem; font-weight: 600; color: var(--text-dark); }
+        input { padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none; }
+        input:focus { border-color: var(--navy-blue); }
+
+        button { background: var(--navy-blue); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 6px; }
+        button:hover { background: var(--primary-green); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { text-align: left; padding: 12px; font-size: 0.9rem; border-bottom: 1px solid #f1f5f9; }
+        th { color: var(--text-muted); font-weight: 600; background: #f8fafc; }
+
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; background: #e0f2fe; color: #0369a1; }
+        .msg-sucesso { background: #ecfdf5; color: #047857; padding: 10px; border-radius: 8px; font-size: 0.85rem; border: 1px solid #a7f3d0; margin-bottom: 12px; }
+        .msg-erro { background: #fef2f2; color: #b91c1c; padding: 10px; border-radius: 8px; font-size: 0.85rem; border: 1px solid #fecaca; margin-bottom: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="user-info">
+                <h1>{{ nome }}</h1>
+                <p>CRM Ativo: <strong>{{ crm }}</strong></p>
+            </div>
+            <a href="/logout" class="logout-btn">Sair do Sistema</a>
+        </header>
+
+        <div class="grid">
+            <!-- Form de Cadastro de Exame -->
+            <div class="card">
+                <h2>🧪 Solicitar Novo Exame</h2>
+
+                {% with sucs = get_flashed_messages(category_filter=["sucesso_exame"]) %}
+                  {% if sucs %}<div class="msg-sucesso">{{ sucs[0] }}</div>{% endif %}
+                {% endwith %}
+
+                {% with errs = get_flashed_messages(category_filter=["erro_exame"]) %}
+                  {% if errs %}<div class="msg-erro">{{ errs[0] }}</div>{% endif %}
+                {% endwith %}
+
+                <form action="/cadastrar_exame" method="POST" onsubmit="return validarFormExame()">
+                    <div class="form-group">
+                        <label for="cpf_paciente">CPF do Paciente</label>
+                        <input type="text" id="cpf_paciente" name="cpf_paciente" placeholder="000.000.000-00" maxlength="14" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="tipo">Exame Solicitado</label>
+                        <input type="text" id="tipo" name="tipo" placeholder="Ex: Hemograma, Ultrassonografia" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dataSolicitacao">Data da Solicitação</label>
+                        <input type="date" id="dataSolicitacao" name="dataSolicitacao" required>
+                    </div>
+
+                    <button type="submit">Cadastrar Solicitação</button>
+                </form>
+            </div>
+
+            <!-- Lista de Consultas Agendadas -->
+            <div class="card">
+                <h2>📅 Suas Consultas Agendadas</h2>
+                <table>
+                    <thead>
+                        <tr><th>CPF Paciente</th><th>Data</th><th>Motivo</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for c in consultas %}
+                        <tr>
+                            <td>{{ c.CPFPaciente }}</td>
+                            <td>{{ c.dataConsulta }}</td>
+                            <td>{{ c.Motivo }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Nenhuma consulta vinculada ao seu CRM.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Lista de Exames Solicitados -->
+            <div class="card full-width">
+                <h2>📑 Exames Solicitados por você</h2>
+                <table>
+                    <thead>
+                        <tr><th>CPF Paciente</th><th>Exame</th><th>Data Solicitação</th><th>Situação</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for e in exames %}
+                        <tr>
+                            <td>{{ e.CPF }}</td>
+                            <td>{{ e.Tipo }}</td>
+                            <td>{{ e.dataSolicitacao }}</td>
+                            <td><span class="badge">{{ e.Situacao }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Nenhum exame solicitado até o momento.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const cpfInput = document.getElementById('cpf_paciente');
+        cpfInput.addEventListener('input', (e) => {
+            let v = e.target.value.replace(/\D/g, "");
+            if (v.length > 11) v = v.slice(0, 11);
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d)/, "$1.$2");
+            v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            e.target.value = v;
+        });
+
+        function validarFormExame() {
+            const rawCpf = cpfInput.value.replace(/\D/g, "");
+            if (rawCpf.length !== 11) {
+                alert("Por favor, digite o CPF completo com 11 números.");
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>
