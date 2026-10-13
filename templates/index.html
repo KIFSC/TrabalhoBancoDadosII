@@ -2,104 +2,38 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal PEPGH - Boas-vindas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Portal PEPGH</title>
     <style>
-        :root {
-            --primary-green: #00d285;
-            --primary-dark: #00a86b;
-            --navy-blue: #182238;
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-dark: #182238;
-            --text-muted: #64748b;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-dark); display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
-        .container { max-width: 960px; width: 100%; text-align: center; }
-        
-        .header-title { margin-bottom: 40px; }
-        .header-title h1 { font-size: 2.2rem; color: var(--navy-blue); font-weight: 700; margin-bottom: 8px; }
-        .header-title p { color: var(--text-muted); font-size: 1.05rem; }
-
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; }
-        .card { background: var(--card-bg); padding: 32px 24px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border-top: 6px solid var(--primary-green); text-align: left; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.25s, box-shadow 0.25s; }
-        .card-medico { border-top-color: var(--navy-blue); }
-        .card-cadastro { border-top-color: #0284c7; }
-        .card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.08); }
-
-        .card-icon { width: 50px; height: 50px; border-radius: 12px; background: #e6f9f2; color: var(--primary-green); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 20px; }
-        .card-medico .card-icon { background: #f0f2f5; color: var(--navy-blue); }
-        .card-cadastro .card-icon { background: #e0f2fe; color: #0284c7; }
-
-        h2 { font-size: 1.3rem; color: var(--navy-blue); margin-bottom: 10px; font-weight: 700; }
-        p.desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; }
-
-        form { display: flex; flex-direction: column; gap: 14px; }
-        label { font-size: 0.85rem; font-weight: 600; color: var(--text-dark); }
-        input { padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; outline: none; transition: border-color 0.2s; }
-        input:focus { border-color: var(--primary-green); box-shadow: 0 0 0 3px rgba(0,210,133,0.15); }
-
-        .btn { padding: 14px; border-radius: 10px; border: none; font-weight: 600; font-size: 0.95rem; cursor: pointer; text-align: center; text-decoration: none; transition: background-color 0.2s; }
-        .btn-paciente { background: var(--primary-green); color: white; }
-        .btn-paciente:hover { background: var(--primary-dark); }
-        .btn-medico { background: var(--navy-blue); color: white; }
-        .btn-medico:hover { background: #0f172a; }
-        .btn-cadastro { background: #0284c7; color: white; }
-        .btn-cadastro:hover { background: #0369a1; }
-
-        .alert-error { background: #fef2f2; color: #dc2626; padding: 10px 14px; border-radius: 8px; font-size: 0.85rem; border: 1px solid #fecaca; margin-top: 10px; }
+        body { font-family: sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .grid { display: flex; gap: 20px; }
+        .card { background: white; padding: 25px; border-radius: 10px; width: 260px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .btn { display: block; width: 100%; padding: 10px; text-align: center; background: #00d285; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 15px; box-sizing: border-box; border: none; cursor: pointer; }
+        .btn-medico { background: #182238; }
+        input { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+        .erro { color: red; font-size: 0.85rem; margin-top: 5px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header-title">
-            <h1>🌿 Portal de Saúde PEPGH</h1>
-            <p>Selecione como deseja acessar ou cadastrar o atendimento</p>
+    <div class="grid">
+        <div class="card">
+            <h3>Novo Paciente</h3>
+            <p>Cadastre um paciente no sistema.</p>
+            <a href="/novo_paciente" class="btn">Cadastrar</a>
         </div>
-
-        <div class="cards-grid">
-            <!-- Cadastrar Paciente -->
-            <div class="card card-cadastro">
-                <div>
-                    <div class="card-icon">➕</div>
-                    <h2>Novo Paciente</h2>
-                    <p class="desc">Cadastre um novo paciente no sistema informando seus dados pessoais e CPF.</p>
-                </div>
-                <a href="/novo_paciente" class="btn btn-cadastro">Cadastrar Paciente</a>
-            </div>
-
-            <!-- Área do Paciente -->
-            <div class="card">
-                <div>
-                    <div class="card-icon">👤</div>
-                    <h2>Espaço Paciente</h2>
-                    <p class="desc">Acesse para agendar consultas e filtrar todo o histórico por CPF do paciente.</p>
-                </div>
-                <a href="/paciente" class="btn btn-paciente">Acessar Consultas</a>
-            </div>
-
-            <!-- Área do Médico -->
-            <div class="card card-medico">
-                <div>
-                    <div class="card-icon">🩺</div>
-                    <h2>Área do Médico</h2>
-                    <p class="desc">Informe o seu CRM para consultar agendas e emitir solicitações de exames.</p>
-                </div>
-                <form action="/login_medico" method="POST">
-                    <div>
-                        <input type="number" id="crm" name="crm" placeholder="Digite seu CRM" required style="width: 100%;">
-                    </div>
-                    <button type="submit" class="btn btn-medico">Acessar por CRM</button>
-                    {% with messages = get_flashed_messages(category_filter=["erro_medico"]) %}
-                      {% if messages %}
-                        <div class="alert-error">{{ messages[0] }}</div>
-                      {% endif %}
-                    {% endwith %}
-                </form>
-            </div>
+        <div class="card">
+            <h3>Área Paciente</h3>
+            <p>Consulte históricos e agende consultas.</p>
+            <a href="/paciente" class="btn">Acessar</a>
+        </div>
+        <div class="card">
+            <h3>Área Médico</h3>
+            <form action="/login_medico" method="POST">
+                <input type="number" name="crm" placeholder="Digite o CRM" required>
+                <button type="submit" class="btn btn-medico">Entrar</button>
+                {% with msgs = get_flashed_messages(category_filter=["erro_medico"]) %}
+                    {% if msgs %}<p class="erro">{{ msgs[0] }}</p>{% endif %}
+                {% endwith %}
+            </form>
         </div>
     </div>
 </body>

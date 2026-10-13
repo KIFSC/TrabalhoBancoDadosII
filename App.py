@@ -1,7 +1,7 @@
 from flask import Flask
 
 app = Flask(__name__)
-app.secret_key = "chave_secreta_pepgh_humana"
+app.secret_key = "chave_pepgh_segura"
 
 from views import *
 

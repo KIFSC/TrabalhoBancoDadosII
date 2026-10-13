@@ -2,187 +2,150 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espaço do Paciente - PEPGH</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Espaço do Paciente</title>
     <style>
-        :root {
-            --primary: #00d285;
-            --navy-blue: #182238;
-            --bg: #f4f7f6;
-            --card-bg: #ffffff;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg); color: var(--navy-blue); padding: 30px 20px; }
-        .container { max-width: 1080px; margin: 0 auto; }
-
-        header { background: var(--card-bg); padding: 24px; border-radius: 16px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-        .nav-actions { display: flex; gap: 10px; }
-        .btn-link { text-decoration: none; color: #64748b; font-weight: 600; padding: 8px 16px; border-radius: 8px; background: #f1f5f9; font-size: 0.9rem; }
-
-        .search-bar { background: var(--card-bg); padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 24px; }
-        .search-bar form { display: flex; gap: 12px; width: 100%; flex-wrap: wrap; }
-
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        .card { background: var(--card-bg); padding: 24px; border-radius: 16px; border: 1px solid #e2e8f0; }
-        .full-width { grid-column: span 2; }
-
-        h2 { font-size: 1.15rem; margin-bottom: 16px; border-bottom: 2px solid #f1f5f9; padding-bottom: 8px; }
-
-        form { display: flex; flex-direction: column; gap: 12px; }
-        input { padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; outline: none; }
-
-        .btn { padding: 10px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; text-decoration: none; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+        .box { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { text-align: left; padding: 12px; font-size: 0.88rem; border-bottom: 1px solid #f1f5f9; }
-        th { background: #f8fafc; color: #64748b; }
-
-        .msg-sucesso { background: #ecfdf5; color: #047857; padding: 12px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 12px; border: 1px solid #a7f3d0; }
-        .msg-erro { background: #fef2f2; color: #b91c1c; padding: 12px; border-radius: 8px; font-size: 0.88rem; margin-bottom: 12px; border: 1px solid #fecaca; }
+        th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f8f9fa; }
+        input, button { padding: 8px; margin-right: 5px; }
+        button { background: #00d285; color: white; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-del { background: #ef4444; }
+        .btn-edit { background: #f59e0b; }
+        .btn-toggle { background: #0284c7; margin-top: 10px; }
+        .linha-oculta { display: none; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <div>
-                <h1>Espaço do Paciente</h1>
-                <p>Agende consultas e filtre o histórico completo por CPF</p>
-            </div>
-            <div class="nav-actions">
-                <a href="/novo_paciente" class="btn-link">➕ Novo Paciente</a>
-                <a href="/" class="btn-link">← Início</a>
-            </div>
-        </header>
+    <a href="/">← Voltar ao Início</a>
+    <h1>Espaço do Paciente</h1>
 
-        <!-- Filtro por CPF -->
-        <div class="search-bar">
-            <form action="/paciente" method="GET">
-                <input type="text" id="cpf_busca" name="cpf_busca" placeholder="Digite o CPF do Paciente para filtrar os registros..." value="{{ cpf_busca }}" style="flex: 1;" maxlength="14">
-                <button type="submit" class="btn btn-primary">Filtrar por CPF</button>
-                {% if cpf_busca %}
-                    <a href="/paciente" class="btn" style="background:#e2e8f0; color:#334155; text-decoration:none;">Limpar Filtro</a>
-                {% endif %}
-            </form>
-        </div>
+    <!-- Busca por CPF -->
+    <div class="box">
+        <form action="/paciente" method="GET">
+            <input type="number" name="cpf_busca" placeholder="Filtrar por CPF" value="{{ cpf_busca }}">
+            <button type="submit">Filtrar</button>
+            <a href="/paciente">Limpar Filtro</a>
+        </form>
+    </div>
 
-        {% if paciente_atual %}
-            <div class="msg-sucesso">
-                👤 Paciente Selecionado: <strong>{{ paciente_atual.Nome }}</strong> (CPF: {{ paciente_atual.CPF }})
-            </div>
-        {% elif cpf_busca %}
-            <div class="msg-erro">
-                Nenhum paciente encontrado com o CPF informando ({{ cpf_busca }}).
-            </div>
+    <!-- Tabela de Pacientes Cadastrados (limite visível = 3) -->
+    <div class="box">
+        <h3>Pacientes Cadastrados</h3>
+        <table>
+            <thead>
+                <tr><th>Nome</th><th>CPF</th><th>Data de Nascimento</th><th>Histórico Familiar</th></tr>
+            </thead>
+            <tbody>
+                {% for p in pacientes %}
+                <tr class="{% if loop.index > 3 %}linha-oculta item-paciente-extra{% endif %}">
+                    <td><b>{{ p.Nome }}</b></td>
+                    <td>{{ p.CPF }}</td>
+                    <td>{{ p.DataNascimento }}</td>
+                    <td>{{ p.historicoFamiliar | join(', ') if p.historicoFamiliar else 'Nenhum' }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4">Nenhum paciente cadastrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if pacientes|length > 3 %}
+            <button id="btnTogglePacientes" class="btn-toggle" onclick="togglePacientes()">Ver mais pacientes (+{{ pacientes|length - 3 }})</button>
         {% endif %}
+    </div>
 
-        <div class="grid">
-            <!-- Agendar Consulta -->
-            <div class="card full-width">
-                <h2>🗓️ Agendar Nova Consulta</h2>
-                {% with errs = get_flashed_messages(category_filter=["erro_consulta"]) %}
-                    {% if errs %}<div class="msg-erro">{{ errs[0] }}</div>{% endif %}
-                {% endwith %}
-                {% with sucs = get_flashed_messages(category_filter=["sucesso_consulta"]) %}
-                    {% if sucs %}<div class="msg-sucesso">{{ sucs[0] }}</div>{% endif %}
-                {% endwith %}
+    <!-- Agendamento -->
+    <div class="box">
+        <h3>Agendar Nova Consulta</h3>
+        {% with msgs = get_flashed_messages(category_filter=["erro_consulta"]) %}
+            {% if msgs %}<p style="color:red;">{{ msgs[0] }}</p>{% endif %}
+        {% endwith %}
+        <form action="/cadastrar_consulta" method="POST">
+            <input type="number" name="cpf_paciente" placeholder="Seu CPF" value="{{ cpf_busca }}" required>
+            <input type="number" name="crm_medico" placeholder="CRM do Médico" required>
+            <input type="date" name="data" required>
+            <input type="text" name="motivo" placeholder="Motivo da Consulta" required>
+            <button type="submit">Agendar</button>
+        </form>
+    </div>
 
-                <form action="/cadastrar_consulta" method="POST" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <input type="text" class="cpf-mask" name="cpf_paciente" placeholder="CPF do Paciente" value="{{ cpf_busca }}" maxlength="14" required>
-                    <input type="number" name="crm_medico" placeholder="CRM do Médico" required>
-                    <input type="date" name="data" required>
-                    <input type="text" name="motivo" placeholder="Motivo da Consulta" required>
-                    <button type="submit" class="btn btn-primary" style="grid-column: span 2;">Confirmar Agendamento</button>
-                </form>
-            </div>
+    <!-- Tabela de Consultas -->
+    <div class="box">
+        <h3>Consultas Agendadas</h3>
+        <table>
+            <tr><th>CPF Paciente</th><th>Nome do Médico</th><th>Data</th><th>Motivo</th><th>Ações</th></tr>
+            {% for c in consultas %}
+            <tr>
+                <td>{{ c.CPFPaciente }}</td>
+                <td><b>{{ c.NomeMedico }}</b></td>
+                <td>
+                    <form action="/editar_consulta/{{ c.id }}" method="POST" style="display:inline-flex;">
+                        <input type="date" name="dataConsulta" value="{{ c.dataConsulta }}" required>
+                </td>
+                <td>
+                        <input type="text" name="Motivo" value="{{ c.Motivo }}" required>
+                </td>
+                <td>
+                        <button type="submit" class="btn-edit">Alterar</button>
+                    </form>
 
-            <!-- Tabela de Consultas -->
-            <div class="card full-width">
-                <h2>📋 Consultas Encontradas</h2>
-                <table>
-                    <thead>
-                        <tr><th>CPF Paciente</th><th>Nome do Médico</th><th>Data</th><th>Motivo</th><th>Ações</th></tr>
-                    </thead>
-                    <tbody>
-                        {% for c in consultas %}
-                        <tr>
-                            <td>{{ c.CPFPaciente }}</td>
-                            <td><strong>{{ c.NomeMedico }}</strong></td>
-                            <td>
-                                <form action="/editar_consulta/{{ c.id }}" method="POST" style="display:inline-flex;">
-                                    <input type="date" name="dataConsulta" value="{{ c.dataConsulta }}" required style="padding:4px;">
-                            </td>
-                            <td>
-                                    <input type="text" name="Motivo" value="{{ c.Motivo }}" required style="padding:4px;">
-                            </td>
-                            <td>
-                                    <button type="submit" class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;">Alterar</button>
-                                </form>
+                    <form action="/excluir_consulta/{{ c.id }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn-del" onclick="return confirm('Excluir consulta?')">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5">Nenhuma consulta encontrada.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
 
-                                <form action="/excluir_consulta/{{ c.id }}" method="POST" onsubmit="return confirm('Deseja excluir esta consulta?')" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;">Excluir</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr><td colspan="5" style="text-align:center; color:#64748b;">Nenhuma consulta registrada para os parâmetros informados.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Tabela de Exames -->
-            <div class="card full-width">
-                <h2>🔬 Exames Solicitados</h2>
-                <table>
-                    <thead>
-                        <tr><th>CPF Paciente</th><th>Exame Solicitado</th><th>Médico Responsável</th><th>Data Solicitação</th><th>Ações</th></tr>
-                    </thead>
-                    <tbody>
-                        {% for e in exames %}
-                        <tr>
-                            <td>{{ e.CPF }}</td>
-                            <td>
-                                <form action="/editar_exame/{{ e.id }}" method="POST" style="display:inline-flex;">
-                                    <input type="text" name="Tipo" value="{{ e.Tipo }}" required style="padding:4px;">
-                            </td>
-                            <td><strong>{{ e.NomeMedico }}</strong></td>
-                            <td>{{ e.dataSolicitacao }}</td>
-                            <td>
-                                    <button type="submit" class="btn btn-warning" style="padding:4px 8px; font-size:0.75rem;">Alterar</button>
-                                </form>
-
-                                <form action="/excluir_exame/{{ e.id }}" method="POST" onsubmit="return confirm('Deseja excluir este exame?')" style="display:inline;">
-                                    <button type="submit" class="btn btn-danger" style="padding:4px 8px; font-size:0.75rem;">Excluir</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr><td colspan="5" style="text-align:center; color:#64748b;">Nenhum exame registrado para os parâmetros informados.</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+    <!-- Tabela de Exames (Paciente APENAS VISUALIZA e EXCLUI) -->
+    <div class="box">
+        <h3>Exames Solicitados</h3>
+        <table>
+            <tr><th>CPF Paciente</th><th>Exame</th><th>Médico Solicitante</th><th>Data Solicitação</th><th>Ações</th></tr>
+            {% for e in exames %}
+            <tr>
+                <td>{{ e.CPF }}</td>
+                <td><b>{{ e.Tipo }}</b></td>
+                <td><b>{{ e.NomeMedico }}</b></td>
+                <td>{{ e.dataSolicitacao }}</td>
+                <td>
+                    <form action="/excluir_exame/{{ e.id }}" method="POST" style="display:inline;">
+                        <button type="submit" class="btn-del" onclick="return confirm('Excluir exame?')">Excluir</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5">Nenhum exame encontrado.</td></tr>
+            {% endfor %}
+        </table>
     </div>
 
     <script>
-        document.querySelectorAll('.cpf-mask, #cpf_busca').forEach(input => {
-            input.addEventListener('input', (e) => {
-                let v = e.target.value.replace(/\D/g, "");
-                if (v.length > 11) v = v.slice(0, 11);
-                v = v.replace(/(\d{3})(\d)/, "$1.$2");
-                v = v.replace(/(\d{3})(\d)/, "$1.$2");
-                v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-                e.target.value = v;
+        function togglePacientes() {
+            const extras = document.querySelectorAll('.item-paciente-extra');
+            const btn = document.getElementById('btnTogglePacientes');
+            let oculto = false;
+
+            extras.forEach(el => {
+                if (el.style.display === 'table-row') {
+                    el.style.display = 'none';
+                    oculto = true;
+                } else {
+                    el.style.display = 'table-row';
+                }
             });
-        });
+
+            if (oculto) {
+                btn.innerText = "Ver mais pacientes (+{{ pacientes|length - 3 }})";
+            } else {
+                btn.innerText = "Ver menos pacientes";
+            }
+        }
     </script>
 </body>
 </html>
