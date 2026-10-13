@@ -102,25 +102,20 @@
         </table>
     </div>
 
-    <!-- Tabela de Exames (Paciente APENAS VISUALIZA e EXCLUI) -->
+    <!-- Tabela de Exames (Apenas Leitura/Visualização para o Paciente) -->
     <div class="box">
         <h3>Exames Solicitados</h3>
         <table>
-            <tr><th>CPF Paciente</th><th>Exame</th><th>Médico Solicitante</th><th>Data Solicitação</th><th>Ações</th></tr>
+            <tr><th>CPF Paciente</th><th>Exame</th><th>Médico Solicitante</th><th>Data Solicitação</th></tr>
             {% for e in exames %}
             <tr>
                 <td>{{ e.CPF }}</td>
                 <td><b>{{ e.Tipo }}</b></td>
                 <td><b>{{ e.NomeMedico }}</b></td>
                 <td>{{ e.dataSolicitacao }}</td>
-                <td>
-                    <form action="/excluir_exame/{{ e.id }}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn-del" onclick="return confirm('Excluir exame?')">Excluir</button>
-                    </form>
-                </td>
             </tr>
             {% else %}
-            <tr><td colspan="5">Nenhum exame encontrado.</td></tr>
+            <tr><td colspan="4">Nenhum exame encontrado.</td></tr>
             {% endfor %}
         </table>
     </div>

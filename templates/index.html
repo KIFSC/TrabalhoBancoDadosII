@@ -9,8 +9,10 @@
         .card { background: white; padding: 25px; border-radius: 10px; width: 260px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
         .btn { display: block; width: 100%; padding: 10px; text-align: center; background: #00d285; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 15px; box-sizing: border-box; border: none; cursor: pointer; }
         .btn-medico { background: #182238; }
+        .btn-secundario { background: #64748b; font-size: 0.85rem; padding: 8px; margin-top: 10px; }
         input { width: 100%; padding: 10px; margin-top: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
         .erro { color: red; font-size: 0.85rem; margin-top: 5px; }
+        .sucesso { color: #047857; font-size: 0.85rem; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -18,22 +20,27 @@
         <div class="card">
             <h3>Novo Paciente</h3>
             <p>Cadastre um paciente no sistema.</p>
-            <a href="/novo_paciente" class="btn">Cadastrar</a>
+            <a href="/novo_paciente" class="btn">Cadastrar Paciente</a>
         </div>
         <div class="card">
             <h3>Área Paciente</h3>
             <p>Consulte históricos e agende consultas.</p>
-            <a href="/paciente" class="btn">Acessar</a>
+            <a href="/paciente" class="btn">Acessar Portal</a>
         </div>
         <div class="card">
             <h3>Área Médico</h3>
+            {% with msgs = get_flashed_messages(category_filter=["sucesso_medico"]) %}
+                {% if msgs %}<p class="sucesso">{{ msgs[0] }}</p>{% endif %}
+            {% endwith %}
             <form action="/login_medico" method="POST">
-                <input type="number" name="crm" placeholder="Digite o CRM" required>
+                <input type="number" name="crm" placeholder="Digite seu CRM" required>
                 <button type="submit" class="btn btn-medico">Entrar</button>
                 {% with msgs = get_flashed_messages(category_filter=["erro_medico"]) %}
                     {% if msgs %}<p class="erro">{{ msgs[0] }}</p>{% endif %}
                 {% endwith %}
             </form>
+            <hr style="margin-top: 15px; border: 0; border-top: 1px solid #eee;">
+            <a href="/novo_medico" class="btn btn-secundario">Cadastrar Novo Médico</a>
         </div>
     </div>
 </body>

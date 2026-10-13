@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Médico</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: white; padding: 30px; border-radius: 10px; width: 340px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        input, button { width: 100%; padding: 10px; margin-bottom: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 5px; }
+        button { background: #182238; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { background: #00d285; }
+        .erro { color: red; font-size: 0.85rem; margin-bottom: 10px; }
+        a { text-decoration: none; color: #555; display: inline-block; margin-top: 10px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Cadastrar Médico</h2>
+        {% with msgs = get_flashed_messages(category_filter=["erro_cadastro_medico"]) %}
+            {% if msgs %}<p class="erro">{{ msgs[0] }}</p>{% endif %}
+        {% endwith %}
+        <form action="/cadastrar_medico" method="POST">
+            <input type="text" name="nome" placeholder="Nome Completo" required>
+            <input type="number" name="crm" placeholder="Número do CRM" required>
+            <input type="text" name="especialidades" placeholder="Especialidades (separadas por vírgula)">
+            <input type="text" name="telefone" placeholder="Telefone de Contato">
+            <input type="email" name="email" placeholder="E-mail de Contato">
+            <button type="submit">Salvar Médico</button>
+        </form>
+        <a href="/">← Voltar ao Início</a>
+    </div>
+</body>
+</html>

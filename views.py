@@ -3,7 +3,10 @@ from flask import render_template, request, redirect, url_for, session, flash
 from pymongo import MongoClient
 
 # Conexão MongoDB
-con = MongoClient('mongodb://localhost:27017/')
+MONGO_URI = "mongodb+srv://kauam27_db_user:2703Kaua@projects.ebye3kh.mongodb.net/?appName=Projects"
+
+# Conexão com o banco na nuvem
+con = MongoClient(MONGO_URI)
 db = con.get_database("PEPGH")
 
 colecao_medicos = db.get_collection('Medicos')
@@ -69,6 +72,51 @@ def login_medico():
 @app.route("/logout")
 def logout():
     session.clear()
+    return redirect(url_for("index"))
+
+# --- CADASTRO DE MÉDICO ---
+@app.route("/novo_medico")
+def tela_novo_medico():
+    return render_template("cadastrar_medico.html")
+
+@app.route("/cadastrar_medico", methods=["POST"])
+def cadastrar_medico():
+    nome = request.form.get("nome", "").strip()
+    crm_digits = limpar_numero(request.form.get("crm"))
+    especialidades_raw = request.form.get("especialidades", "").strip()
+    telefone = request.form.get("telefone", "").strip()
+    email = request.form.get("email", "").strip()
+
+    if not crm_digits:
+        flash("O CRM deve conter números válidos.", "erro_cadastro_medico")
+        return redirect(url_for("tela_novo_medico"))
+
+    crm_num = int(crm_digits)
+
+    # Verifica se CRM já existe
+    if colecao_medicos.find_one({"$or": [{"CRM": crm_num}, {"CRM": crm_digits}]}):
+        flash("Já existe um médico cadastrado com este CRM.", "erro_cadastro_medico")
+        return redirect(url_for("tela_novo_medico"))
+
+    # Processa as especialidades separadas por vírgula em uma lista
+    especialidades = [esp.strip() for esp in especialidades_raw.split(",") if esp.strip()]
+
+    # Estrutura JSON exata do Medicos.json
+    novo_medico = {
+        "Nome": nome,
+        "CRM": crm_num,
+        "Especialidade": especialidades,
+        "Contatos": [
+            {
+                "telefone": telefone,
+                "Email": [email] if email else []
+            }
+        ]
+    }
+
+    colecao_medicos.insert_one(novo_medico)
+
+    flash("Médico cadastrado com sucesso! Agora você já pode fazer login.", "sucesso_medico")
     return redirect(url_for("index"))
 
 # --- PAINEL DO MÉDICO ---
@@ -236,11 +284,6 @@ def editar_consulta(id):
 @app.route("/excluir_consulta/<int:id>", methods=["POST"])
 def excluir_consulta(id):
     colecao_consultas.delete_one({"id": id})
-    return redirect(url_for("painel_paciente"))
-
-@app.route("/excluir_exame/<int:id>", methods=["POST"])
-def excluir_exame(id):
-    colecao_exames.delete_one({"id": id})
     return redirect(url_for("painel_paciente"))
 
 # --- ALTERAR & EXCLUIR EXAME (MÉDICO) ---
