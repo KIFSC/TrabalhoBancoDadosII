@@ -2,7 +2,6 @@ from App import app
 from flask import render_template, request, redirect, url_for, session, flash
 from pymongo import MongoClient
 
-
 # 1. String de conexão para o MongoDB Compass (Local)
 MONGO_URI = "mongodb://localhost:27017/"
 
@@ -17,6 +16,156 @@ colecao_medicos = db["Medicos"]
 colecao_pacientes = db["Pacientes"]
 colecao_consultas = db["Consultas"]
 colecao_exames = db["Exames"]
+
+
+# --- POPULAR BANCO DE DADOS AUTOMATICAMENTE ---
+def popular_banco_dados():
+    # 1. Médicos
+    if colecao_medicos.count_documents({}) == 0:
+        medicos_iniciais = [
+            {
+                "Nome": "Dra. Ana Silva",
+                "CRM": 12345,
+                "Especialidade": ["Cardiologia"],
+                "Contatos": [{"telefone": "11988887777", "Email": ["ana.silva@email.com"]}]
+            },
+            {
+                "Nome": "Dr. Carlos Santos",
+                "CRM": 23456,
+                "Especialidade": ["Pediatria", "Clinica Geral"],
+                "Contatos": [{"telefone": "11977776666", "Email": ["carlos.santos@email.com"]}]
+            },
+            {
+                "Nome": "Dra. Juliana Mendes",
+                "CRM": 34567,
+                "Especialidade": ["Dermatologia"],
+                "Contatos": [{"telefone": "11966665555", "Email": ["juliana.mendes@email.com"]}]
+            },
+            {
+                "Nome": "Dr. Roberto Lima",
+                "CRM": 45678,
+                "Especialidade": ["Ortopedia"],
+                "Contatos": [{"telefone": "11955554444", "Email": ["roberto.lima@email.com"]}]
+            }
+        ]
+        colecao_medicos.insert_many(medicos_iniciais)
+
+    # 2. Pacientes
+    if colecao_pacientes.count_documents({}) == 0:
+        pacientes_iniciais = [
+            {
+                "Nome": "João Oliveira",
+                "CPF": 11122233344,
+                "DataNascimento": "1990-05-15",
+                "historicoFamiliar": ["Hipertensão"]
+            },
+            {
+                "Nome": "Maria Souza",
+                "CPF": 22233344455,
+                "DataNascimento": "1985-08-20",
+                "historicoFamiliar": ["Diabetes"]
+            },
+            {
+                "Nome": "Pedro Alves",
+                "CPF": 33344455566,
+                "DataNascimento": "2000-12-10",
+                "historicoFamiliar": []
+            },
+            {
+                "Nome": "Fernanda Costa",
+                "CPF": 44455566677,
+                "DataNascimento": "1995-03-30",
+                "historicoFamiliar": ["Asma"]
+            }
+        ]
+        colecao_pacientes.insert_many(pacientes_iniciais)
+
+    # 3. Consultas
+    if colecao_consultas.count_documents({}) == 0:
+        consultas_iniciais = [
+            {
+                "id": 1,
+                "CPFPaciente": 11122233344,
+                "CRMMedico": 12345,
+                "dataConsulta": "2026-03-10",
+                "Motivo": "Rotina Cardiológica",
+                "sintomas": ["Falta de ar leve"],
+                "tratamento": ["Exame de esforço"]
+            },
+            {
+                "id": 2,
+                "CPFPaciente": 22233344455,
+                "CRMMedico": 23456,
+                "dataConsulta": "2026-03-12",
+                "Motivo": "Acompanhamento geral",
+                "sintomas": [],
+                "tratamento": []
+            },
+            {
+                "id": 3,
+                "CPFPaciente": 33344455566,
+                "CRMMedico": 34567,
+                "dataConsulta": "2026-03-15",
+                "Motivo": "Alergia na pele",
+                "sintomas": ["Manchas vermelhas"],
+                "tratamento": ["Pomada antialérgica"]
+            },
+            {
+                "id": 4,
+                "CPFPaciente": 44455566677,
+                "CRMMedico": 45678,
+                "dataConsulta": "2026-03-20",
+                "Motivo": "Dor no joelho",
+                "sintomas": ["Inchaço após atividade"],
+                "tratamento": ["Repouso e Gelo"]
+            }
+        ]
+        colecao_consultas.insert_many(consultas_iniciais)
+
+    # 4. Exames
+    if colecao_exames.count_documents({}) == 0:
+        exames_iniciais = [
+            {
+                "id": 1,
+                "CPF": 11122233344,
+                "CRM": 12345,
+                "Tipo": "Eletrocardiograma",
+                "dataSolicitacao": "2026-03-10",
+                "Situacao": "Solicitado",
+                "resultados": []
+            },
+            {
+                "id": 2,
+                "CPF": 22233344455,
+                "CRM": 23456,
+                "Tipo": "Hemograma Completo",
+                "dataSolicitacao": "2026-03-12",
+                "Situacao": "Concluído",
+                "resultados": ["Glicose normal", "Hemoglobina normal"]
+            },
+            {
+                "id": 3,
+                "CPF": 33344455566,
+                "CRM": 34567,
+                "Tipo": "Biópsia de Pele",
+                "dataSolicitacao": "2026-03-15",
+                "Situacao": "Em Andamento",
+                "resultados": []
+            },
+            {
+                "id": 4,
+                "CPF": 44455566677,
+                "CRM": 45678,
+                "Tipo": "Raio-X de Joelho",
+                "dataSolicitacao": "2026-03-20",
+                "Situacao": "Solicitado",
+                "resultados": []
+            }
+        ]
+        colecao_exames.insert_many(exames_iniciais)
+
+# Executa o preenchimento automático na inicialização
+popular_banco_dados()
 
 def limpar_numero(txt):
     if not txt:
