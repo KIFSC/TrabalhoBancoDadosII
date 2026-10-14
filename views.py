@@ -2,17 +2,21 @@ from App import app
 from flask import render_template, request, redirect, url_for, session, flash
 from pymongo import MongoClient
 
-# Conexão MongoDB
-MONGO_URI = "mongodb+srv://kauam27_db_user:2703Kaua@projects.ebye3kh.mongodb.net/?appName=Projects"
 
-# Conexão com o banco na nuvem
+# 1. String de conexão para o MongoDB Compass (Local)
+MONGO_URI = "mongodb://localhost:27017/"
+
+# 2. Conecta ao servidor local do MongoDB Compass
 con = MongoClient(MONGO_URI)
-db = con.get_database("PEPGH")
 
-colecao_medicos = db.get_collection('Medicos')
-colecao_pacientes = db.get_collection('Pacientes')
-colecao_consultas = db.get_collection('Consultas')
-colecao_exames = db.get_collection('Exames')
+# 3. Cria/Acessa o banco de dados "PEPGH"
+db = con["PEPGH"]
+
+# 4. Cria/Acessa as coleções (equivalente às tabelas)
+colecao_medicos = db["Medicos"]
+colecao_pacientes = db["Pacientes"]
+colecao_consultas = db["Consultas"]
+colecao_exames = db["Exames"]
 
 def limpar_numero(txt):
     if not txt:
